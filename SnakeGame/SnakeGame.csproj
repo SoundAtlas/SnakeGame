@@ -25,7 +25,7 @@
     <Resource Include="assets\DeadHead.png" />
     <Resource Include="assets\DroidSansMono.ttf" />
     <Resource Include="assets\Empty.png" />
-    <Resource Include="assets\Food.png" Stretch="UniformToFill"/>
+    <Resource Include="assets\Food.png" />
     <Resource Include="assets\Head.png" />
     <Resource Include="assets\icon.ico" />
   </ItemGroup>

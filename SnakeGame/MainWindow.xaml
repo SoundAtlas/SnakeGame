@@ -31,7 +31,7 @@
             <Border x:Name="GridBorder"
             Grid.Row="1"
             BorderBrush="{StaticResource GridLineColor}"
-            BorderThickness="1.5,1.5,0,0"
+            BorderThickness="1.5"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             RenderOptions.EdgeMode="Aliased"
