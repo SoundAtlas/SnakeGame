@@ -20,7 +20,6 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-
             <TextBlock x:Name="ScoreText"
                HorizontalAlignment="Center"
                VerticalAlignment="Center"

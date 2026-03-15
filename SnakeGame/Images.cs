@@ -5,7 +5,6 @@ namespace SnakeGame
 {
     public static class Images
     {
-
         public static readonly ImageSource Body = LoadImage("Body.png");
         public static readonly ImageSource DeadBody = LoadImage("DeadBody.png");
         public static readonly ImageSource DeadHead = LoadImage("DeadHead.png");

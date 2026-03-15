@@ -9,13 +9,10 @@
         // 2D array representing the game board
         public GridValue[,] Grid { get; }
 
-
         public Direction Dir { get; private set; }
-
-
         public int Score { get; private set; }
-
         public bool IsGameOver { get; private set; }
+
         // Stores upcoming direction changes from player input
         private readonly LinkedList<Direction> dirChanges = new LinkedList<Direction>();
 

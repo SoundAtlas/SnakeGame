@@ -19,7 +19,6 @@ namespace SnakeGame
         };
 
         // Maps direction to rotations for eyes on head
-
         private readonly Dictionary<Direction, int> dirToRotation = new()
         {
             { Direction.Up, 0 },
@@ -197,6 +196,7 @@ namespace SnakeGame
                 await Task.Delay(30);
             }
         }
+
         // Shows countdown before game starts
         private async Task ShowCountDown()
         {
