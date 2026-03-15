@@ -82,5 +82,43 @@
         {
             return snakePositions;
         }
+
+        private void AddHead(GridPosition newHead)
+        {
+            snakePositions.AddFirst(newHead);
+            Grid[newHead.Row, newHead.Column] = GridValue.Snake;
+        }
+
+        private void RemoveTail()
+        {
+            GridPosition tail = snakePositions.Last.Value;
+            Grid[tail.Row, tail.Column] = GridValue.Empty;
+            snakePositions.RemoveLast();
+        }
+
+        public void ChangeDirection(Direction direction)
+        {
+            Dir = direction;
+        }
+
+        private bool OutsideGrid(GridPosition position)
+        {
+            return position.Row < 0 || position.Row >= Rows || position.Column < 0 || position.Column >= Columns;
+        }
+
+        private GridValue WillHit(GridPosition newHeadPos)
+        {
+            if (OutsideGrid(newHeadPos))
+            {
+                return GridValue.Outside;
+            }
+
+            if (newHeadPos == TailPosition())
+            {
+                return GridValue.Empty; // Moving into the tail is allowed since it will move away
+            }
+
+            return Grid[newHeadPos.Row, newHeadPos.Column];
+        }
     }
 }
