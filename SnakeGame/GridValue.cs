@@ -5,6 +5,6 @@
         Empty,
         Snake,
         Food,
-        Oustide
+        Outside
     }
 }
