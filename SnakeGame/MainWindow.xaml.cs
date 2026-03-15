@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 
 
@@ -29,6 +30,41 @@ namespace SnakeGame
             gameState = new GameState(rows, cols);
         }
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            Draw();
+        }
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (gameState.IsGameOver)
+                return;
+
+            switch (e.Key)
+            {
+                case Key.Left:
+                    gameState.ChangeDirection(Direction.Left);
+                    break;
+                case Key.Right:
+                    gameState.ChangeDirection(Direction.Right);
+                    break;
+                case Key.Up:
+                    gameState.ChangeDirection(Direction.Up);
+                    break;
+                case Key.Down:
+                    gameState.ChangeDirection(Direction.Down);
+                    break;
+            }
+        }
+        private async Task GameLoop()
+        {
+            while (!gameState.IsGameOver)
+            {
+                await Task.Delay(100);
+                gameState.Move();
+                Draw();
+            }
+        }
+
         private Image[,] SetupGrid()
         {
             Image[,] gridImages = new Image[rows, cols];
@@ -52,8 +88,10 @@ namespace SnakeGame
             return gridImages;
         }
 
-
-
+        private void Draw()
+        {
+            DrawGrid();
+        }
 
         private void DrawGrid()
         {
