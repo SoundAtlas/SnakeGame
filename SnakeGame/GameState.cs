@@ -82,5 +82,18 @@
         {
             return snakePositions;
         }
+
+        private void AddHead(GridPosition newHead)
+        {
+            snakePositions.AddFirst(newHead);
+            Grid[newHead.Row, newHead.Column] = GridValue.Snake;
+        }
+
+        private void RemoveTail()
+        {
+            GridPosition tail = snakePositions.Last.Value;
+            Grid[tail.Row, tail.Column] = GridValue.Empty;
+            snakePositions.RemoveLast();
+        }
     }
 }
