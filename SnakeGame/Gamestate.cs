@@ -21,6 +21,7 @@
             Dir = Direction.Right;
 
             AddSnake();
+            AddFood();
         }
 
         private void AddSnake()
@@ -36,12 +37,12 @@
             }
         }
 
-
+        // Get all empty positions on the grid
         private IEnumerable<GridPosition> EmptyPositions()
         {
-            for (int r = 0; r < Rows; r++) 
+            for (int r = 0; r < Rows; r++)
             {
-                for (int c = 0; c < Columns; c++) 
+                for (int c = 0; c < Columns; c++)
                 {
                     if (Grid[r, c] == GridValue.Empty)
                     {
@@ -49,6 +50,37 @@
                     }
                 }
             }
+        }
+
+        // Add food to a random empty position
+        private void AddFood()
+        {
+            List<GridPosition> emptyPositions = new List<GridPosition>(EmptyPositions());
+
+            if (emptyPositions.Count == 0)
+            {
+                // No empty space left, player wins
+                IsGameOver = true;
+                return;
+            }
+            // Select a random empty position for the food
+            GridPosition position = emptyPositions[random.Next(emptyPositions.Count)];
+            Grid[position.Row, position.Column] = GridValue.Food;
+        }
+
+        public GridPosition HeadPosition()
+        {
+            return snakePositions.First.Value;
+        }
+
+        public GridPosition TailPosition()
+        {
+            return snakePositions.Last.Value;
+        }
+
+        public IEnumerable<GridPosition> SnakePositions()
+        {
+            return snakePositions;
         }
     }
 }

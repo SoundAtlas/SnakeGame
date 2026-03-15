@@ -67,5 +67,20 @@
             GridPosition position = emptyPositions[random.Next(emptyPositions.Count)];
             Grid[position.Row, position.Column] = GridValue.Food;
         }
+
+        public GridPosition HeadPosition()
+        {
+            return snakePositions.First.Value;
+        }
+
+        public GridPosition TailPosition()
+        {
+            return snakePositions.Last.Value;
+        }
+
+        public IEnumerable<GridPosition> SnakePositions()
+        {
+            return snakePositions;
+        }
     }
 }
