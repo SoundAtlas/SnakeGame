@@ -120,5 +120,33 @@
 
             return Grid[newHeadPos.Row, newHeadPos.Column];
         }
+
+
+        public void Move()
+        {
+            // Calculate new head position based on current direction
+            GridPosition newHeadPos = HeadPosition().NewPosition(Dir);
+            // Check what the new head position will hit
+            GridValue hitValue = WillHit(newHeadPos);
+
+            if (hitValue == GridValue.Outside || hitValue == GridValue.Snake)
+            {
+                // Game over if we hit the wall or our own body
+                IsGameOver = true;
+            }
+            else if (hitValue == GridValue.Empty)
+            {
+                // Move forward by adding new head and removing tail
+                RemoveTail();
+                AddHead(newHeadPos);
+            }
+            else if (hitValue == GridValue.Food)
+            {
+                // Eat the food, grow the snake, and add new food
+                AddHead(newHeadPos);
+                Score++;
+                AddFood();
+            }
+        }
     }
 }
