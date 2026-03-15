@@ -2,17 +2,29 @@
 {
     public class GameState
     {
+        // Grid size
         public int Rows { get; }
         public int Columns { get; }
-        public GridValue[,] Grid { get; }
-        public Direction Dir { get; private set; }
-        public int Score { get; private set; }
-        public bool IsGameOver { get; private set; }
 
+        // 2D array representing the game board
+        public GridValue[,] Grid { get; }
+
+
+        public Direction Dir { get; private set; }
+
+
+        public int Score { get; private set; }
+
+        public bool IsGameOver { get; private set; }
+        // Stores upcoming direction changes from player input
+        private readonly LinkedList<Direction> dirChanges = new LinkedList<Direction>();
+
+        // Stores the positions of the snake body
         private readonly LinkedList<GridPosition> snakePositions = new LinkedList<GridPosition>();
+
         private readonly Random random = new Random();
 
-        //constructor
+        // Constructor: sets up the grid and starts the game
         public GameState(int rows, int columns)
         {
             Rows = rows;
@@ -26,10 +38,10 @@
 
         private void AddSnake()
         {
-            // Start snake in the middle of the grid
+            // Start snake in the middle row
             int r = Rows / 2;
 
-            // Start with a length of 3
+            // Create snake with starting length of 3
             for (int c = 1; c <= 3; c++)
             {
                 Grid[r, c] = GridValue.Snake;
@@ -37,7 +49,7 @@
             }
         }
 
-        // Get all empty positions on the grid
+        // Find all empty cells in the grid
         private IEnumerable<GridPosition> EmptyPositions()
         {
             for (int r = 0; r < Rows; r++)
@@ -52,43 +64,48 @@
             }
         }
 
-        // Add food to a random empty position
+        // Place food on a random empty tile
         private void AddFood()
         {
             List<GridPosition> emptyPositions = new List<GridPosition>(EmptyPositions());
 
             if (emptyPositions.Count == 0)
             {
-                // No empty space left, player wins
+                // No space left -> player wins
                 IsGameOver = true;
                 return;
             }
-            // Select a random empty position for the food
+
             GridPosition position = emptyPositions[random.Next(emptyPositions.Count)];
             Grid[position.Row, position.Column] = GridValue.Food;
         }
 
+        // Get current snake head
         public GridPosition HeadPosition()
         {
             return snakePositions.First.Value;
         }
 
+        // Get current snake tail
         public GridPosition TailPosition()
         {
             return snakePositions.Last.Value;
         }
 
+        // Return all snake body positions
         public IEnumerable<GridPosition> SnakePositions()
         {
             return snakePositions;
         }
 
+        // Add a new head when the snake moves
         private void AddHead(GridPosition newHead)
         {
             snakePositions.AddFirst(newHead);
             Grid[newHead.Row, newHead.Column] = GridValue.Snake;
         }
 
+        // Remove the tail when the snake moves without eating
         private void RemoveTail()
         {
             GridPosition tail = snakePositions.Last.Value;
@@ -96,16 +113,48 @@
             snakePositions.RemoveLast();
         }
 
-        public void ChangeDirection(Direction direction)
+        // Get the most recent direction change
+        private Direction GetLastDirection()
         {
-            Dir = direction;
+            if (dirChanges.Count == 0)
+            {
+                return Dir;
+            }
+
+            return dirChanges.Last.Value;
         }
 
+        // Check if the snake is allowed to change direction
+        private bool CanChangeDirection(Direction newdirection)
+        {
+            // Limit queued direction changes
+            if (dirChanges.Count == 2)
+            {
+                return false;
+            }
+
+            Direction lastDir = GetLastDirection();
+
+            // Prevent reversing directly into itself
+            return newdirection != lastDir && newdirection != lastDir.Opposite();
+        }
+
+        // Called when the player presses a movement key
+        public void ChangeDirection(Direction direction)
+        {
+            if (CanChangeDirection(direction))
+            {
+                dirChanges.AddLast(direction);
+            }
+        }
+
+        // Check if position is outside the grid
         private bool OutsideGrid(GridPosition position)
         {
             return position.Row < 0 || position.Row >= Rows || position.Column < 0 || position.Column >= Columns;
         }
 
+        // Determine what the snake will collide with next
         private GridValue WillHit(GridPosition newHeadPos)
         {
             if (OutsideGrid(newHeadPos))
@@ -113,36 +162,45 @@
                 return GridValue.Outside;
             }
 
+            // Moving into the tail is allowed (it moves away)
             if (newHeadPos == TailPosition())
             {
-                return GridValue.Empty; // Moving into the tail is allowed since it will move away
+                return GridValue.Empty;
             }
 
             return Grid[newHeadPos.Row, newHeadPos.Column];
         }
 
-
+        // Moves the snake one step forward
         public void Move()
         {
-            // Calculate new head position based on current direction
+            // Apply queued direction change
+            if (dirChanges.Count > 0)
+            {
+                Dir = dirChanges.First.Value;
+                dirChanges.RemoveFirst();
+            }
+
+            // Calculate next head position
             GridPosition newHeadPos = HeadPosition().NewPosition(Dir);
-            // Check what the new head position will hit
+
+            // Check what we will hit
             GridValue hitValue = WillHit(newHeadPos);
 
             if (hitValue == GridValue.Outside || hitValue == GridValue.Snake)
             {
-                // Game over if we hit the wall or our own body
+                // Hit wall or body -> game over
                 IsGameOver = true;
             }
             else if (hitValue == GridValue.Empty)
             {
-                // Move forward by adding new head and removing tail
+                // Normal move
                 RemoveTail();
                 AddHead(newHeadPos);
             }
             else if (hitValue == GridValue.Food)
             {
-                // Eat the food, grow the snake, and add new food
+                // Eat food and grow
                 AddHead(newHeadPos);
                 Score++;
                 AddFood();

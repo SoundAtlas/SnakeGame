@@ -35,6 +35,7 @@ namespace SnakeGame
             Draw();
             await GameLoop();
         }
+
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             if (gameState.IsGameOver)
@@ -92,6 +93,7 @@ namespace SnakeGame
         private void Draw()
         {
             DrawGrid();
+            ScoreText.Text = $"SCORE {gameState.Score}";
         }
 
         private void DrawGrid()
