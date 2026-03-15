@@ -30,9 +30,10 @@ namespace SnakeGame
             gameState = new GameState(rows, cols);
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             Draw();
+            await GameLoop();
         }
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
